@@ -1,0 +1,44 @@
+import math
+
+def ent(data):#信息熵
+    global flag_pos,flag_neg
+    for value, key in data:
+        if key == 1:
+            flag_pos += 1
+        else:
+            flag_neg += 1
+    p_pos = flag_pos/(flag_pos+flag_neg)
+    p_neg = flag_neg / (flag_pos + flag_neg)
+    if p_pos>0:
+        pk_pos=p_pos*math.log(p_pos,2)
+    else:pk_pos=0
+    if p_neg>0:
+        pk_neg = p_neg * math.log(p_neg, 2)
+    else:pk_neg=0
+    ent=-(pk_pos+pk_neg)
+    flag_pos = 0
+    flag_neg = 0
+    return ent
+
+def gain(ent0,ent1,ent2,count):#信息增益
+    gain=ent0-(count/17)*ent1-((17-count)/17)*ent2
+    return gain
+
+
+if __name__=='__main__':
+    train={'0.243':2,'0.774':1,'0.245':2,'0.343':2,'0.36':2,'0.403':1,'0.437':1,'0.481':1,
+           '0.556':1,'0.593':2,'0.608':1,'0.634':1,'0.639':2,'0.657':2,'0.666':2,
+           '0.697':1,'0.719':2}
+    S_train=sorted(train.items())
+    flag_pos=0
+    flag_neg=0
+    result=[]
+    for count in range(1, 17):
+        pr=S_train[0:count]
+        ex=S_train[count:]
+        ent0=ent(S_train)
+        ent1=ent(pr)
+        ent2=ent(ex)
+        gain1=gain(ent0,ent1,ent2,count)
+        result.append(gain1)
+    print(max(result))
